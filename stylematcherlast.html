@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Style Matcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ✅ FAVICON (SVG DATA URI) -->
+  <link rel="icon" type="image/svg+xml"
+    href='data:image/svg+xml;utf8,
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="%23f67632"/>
+          <stop offset="1" stop-color="%23e45c16"/>
+        </linearGradient>
+      </defs>
+      <rect width="64" height="64" rx="14" fill="%23fff3e3"/>
+      <circle cx="32" cy="32" r="22" fill="url(%23g)"/>
+      <text x="32" y="39" text-anchor="middle" font-size="22" font-family="serif" fill="%23fff">SM</text>
+    </svg>' />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Libre+Baskerville:wght@400;700&family=Pacifico&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- ✅ Social icons (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root {
+      --page-bg: #f8dccc;
+      --hero-cream: #fdf3e3;
+      --hero-orange: #f67632;
+      --hero-orange-dark: #e45c16;
+      --nav-border: #e3d0c3;
+
+      --shell: #fff9f0;
+      --card: #ffffff;
+
+      --accent-dark: #221612;
+      --accent-soft: #5a3b2a;
+      --text: #3a2920;
+      --muted: #84746a;
+
+      --border: #e2cdbd;
+      --hairline: #edd7c6;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Libre Baskerville", serif; }
+    body { min-height: 100vh; background: var(--page-bg); color: var(--text); }
+    a { text-decoration: none; color: inherit; }
+
+    /* NAVBAR */
+    .nav {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid var(--nav-border);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .nav-inner {
+      width: 100%;
+      max-width: 1160px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      column-gap: 24px;
+    }
+    .nav-left,.nav-right {
+      font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #9a887a;
+    }
+    .nav-left { text-align: left; }
+    .nav-right { text-align: right; }
+
+    .nav-logo {
+      font-family: "Pacifico", cursive;
+      font-size: 26px;
+      letter-spacing: 0.12em;
+      color: var(--hero-orange-dark);
+      text-align: center;
+    }
+    .nav-menu {
+      margin-top: 6px;
+      grid-column: 1 / 4;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #6c5b51;
+    }
+    .nav-menu a { position: relative; cursor: pointer; }
+    .nav-menu a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0;
+      height: 1px;
+      background: var(--accent-dark);
+      transition: width 0.18s ease;
+    }
+    .nav-menu a:hover::after { width: 100%; }
+
+    /* ✅ Social icons area */
+    .nav-right-top {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+    .social-row {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .social-link {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--hairline);
+      background: #fffdfa;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-soft);
+      transition: 0.15s ease;
+      cursor: pointer;
+    }
+    .social-link:hover {
+      border-color: var(--hero-orange-dark);
+      color: var(--hero-orange-dark);
+      transform: translateY(-1px);
+    }
+    .social-link i { font-size: 12px; }
+
+    @media (max-width: 720px) {
+      .nav-inner { grid-template-columns: 1fr; row-gap: 6px; text-align: center; }
+      .nav-left { display: none; }
+      .nav-right { display: none; }
+      .nav-menu { flex-wrap: wrap; gap: 12px; }
+    }
+
+    /* HERO */
+    .hero {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 28px 24px 34px;
+    }
+    .hero-inner {
+      width: 100%;
+      max-width: 1160px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      background: #000;
+      border-radius: 0 0 26px 26px;
+      overflow: hidden;
+      box-shadow: 0 22px 60px rgba(0,0,0,0.28);
+    }
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; border-radius: 0 0 22px 22px; }
+    }
+    .hero-left {
+      background: var(--hero-cream);
+      padding: 48px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hero-heading {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(32px, 4.5vw, 40px);
+      line-height: 1.12;
+      color: var(--accent-dark);
+      letter-spacing: 0.04em;
+    }
+    .hero-heading span { color: var(--hero-orange-dark); }
+    .hero-text {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 16px;
+      max-width: 380px;
+      line-height: 1.7;
+    }
+    .hero-cta-row { margin-top: 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .hero-btn {
+      border: none; outline: none; cursor: pointer;
+      border-radius: 999px; padding: 11px 28px;
+      background: var(--hero-orange); color: #fffaf4;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      box-shadow: 0 20px 48px rgba(246, 118, 50, 0.7);
+      transition: 0.18s ease;
+    }
+    .hero-btn:hover {
+      background: var(--hero-orange-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 24px 56px rgba(246, 118, 50, 0.8);
+    }
+    .hero-note { font-size: 11px; color: var(--muted); max-width: 260px; line-height: 1.5; }
+    .hero-right { background: var(--hero-orange); position: relative; min-height: 260px; }
+    .hero-right::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom right, rgba(0,0,0,0.08), rgba(0,0,0,0.15)),
+        url("images/hero-orange.jpg");
+      background-size: cover;
+      background-position: center;
+      opacity: 0.95;
+    }
+    .hero-right-fallback {
+      position: absolute;
+      inset: 22px 30px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: transparent;
+      display: flex;
+      gap: 12px;
+    }
+    .hero-card {
+      flex: 1;
+      border-radius: 18px;
+      background: rgba(255,248,240,0.96);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+    .hero-card.small { flex: 0.9; background: #ffb284; }
+    @media (max-width: 900px) {
+      .hero-left { padding: 34px 28px; }
+      .hero-right-fallback { inset: 20px; }
+    }
+
+    /* MATCHER */
+    .matcher { width: 100%; display: none; justify-content: center; padding: 40px 24px 44px; }
+    .matcher-inner {
+      width: 100%;
+      max-width: 1160px;
+      background: var(--shell);
+      border-radius: 24px;
+      border: 1px solid var(--hairline);
+      padding: 22px 20px 20px;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.18);
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr);
+      gap: 22px;
+    }
+    @media (max-width: 900px) { .matcher-inner { grid-template-columns: 1fr; } }
+
+    .left-panel { display: flex; flex-direction: column; gap: 18px; }
+    .pill-small {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px; border-radius: 999px;
+      border: 1px solid var(--hairline);
+      font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--muted);
+      background: #fffdfa;
+    }
+    .pill-small-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--hero-orange-dark); }
+    .left-panel-title {
+      font-family: "Playfair Display", serif;
+      font-size: 22px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+    .left-panel-sub {
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 360px;
+      line-height: 1.6;
+    }
+    .form-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 14px 14px 13px;
+      border: 1px solid var(--hairline);
+    }
+    .steps { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    select, input[type="text"] {
+      background: #f8efe4;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 11px;
+      color: var(--text);
+      outline: none;
+      transition: border 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+    select:focus, input[type="text"]:focus {
+      border-color: var(--hero-orange-dark);
+      box-shadow: 0 0 0 1px rgba(246, 107, 40, 0.4);
+      background: #fff9f3;
+    }
+    .chips-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .chip {
+      font-size: 10px; padding: 3px 8px; border-radius: 999px;
+      border: 1px dashed var(--hairline);
+      color: var(--muted); background: #fdf3e7;
+      cursor: pointer; transition: 0.15s ease;
+    }
+    .chip:hover { border-style: solid; color: var(--accent-soft); }
+    .chip.active { border-color: var(--hero-orange-dark); color: var(--accent-dark); background: #ffe6cf; }
+
+    .budget-row, .gender-row, .color-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .budget-pill, .gender-pill {
+      font-size: 10px; padding: 4px 10px; border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted); background: #fdf3e7;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: 0.15s ease;
+    }
+    .budget-pill:hover,.gender-pill:hover { border-color: var(--hero-orange-dark); color: var(--accent-soft); }
+    .budget-pill.active,.gender-pill.active { background: #ffe5cd; border-color: var(--hero-orange-dark); color: var(--accent-dark); }
+
+    .color-pill {
+      font-size: 10px; padding: 4px 10px; border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted); background: #fff8f0;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: 0.15s ease;
+    }
+    .color-dot { width: 10px; height: 10px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.08); }
+    .color-pill:hover { border-color: var(--hero-orange-dark); color: var(--accent-soft); }
+    .color-pill.active { background: #ffe6cf; border-color: var(--hero-orange-dark); color: var(--accent-dark); }
+
+    .btn-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; }
+    .primary-btn {
+      flex: 1;
+      border: none; outline: none; cursor: pointer;
+      background: var(--hero-orange);
+      padding: 9px 14px;
+      border-radius: 999px;
+      color: #fffaf4;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      box-shadow: 0 16px 38px rgba(247,123,52,0.6);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.15s ease;
+    }
+    .primary-btn:hover {
+      background: var(--hero-orange-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 20px 46px rgba(247,123,52,0.7);
+    }
+    .sparkle-icon { font-size: 12px; }
+    .note-tiny { font-size: 9px; color: var(--muted); max-width: 190px; text-align: right; line-height: 1.4; }
+
+    /* RIGHT PANEL */
+    .right-panel { display: flex; flex-direction: column; gap: 10px; }
+    .results-header h2 {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.2em;
+      text-transform: uppercase; font-family: "Playfair Display", serif;
+      color: var(--accent-dark);
+    }
+    .results-sub { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+    .tag-line { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .mini-tag {
+      font-size: 9px; padding: 3px 8px; border-radius: 999px;
+      background: #fff3e7; border: 1px solid var(--hairline);
+      color: var(--accent-soft);
+    }
+    .mini-tag-cat { cursor: pointer; transition: 0.15s ease; }
+    .mini-tag-cat.active { background: var(--hero-orange); border-color: var(--hero-orange-dark); color: #fffaf4; }
+
+    .results-scroll { margin-top: 8px; max-height: 360px; overflow: auto; padding-right: 4px; }
+    .results-scroll::-webkit-scrollbar { width: 6px; }
+    .results-scroll::-webkit-scrollbar-thumb { background: rgba(155, 121, 95, 0.9); border-radius: 999px; }
+
+    .empty-state {
+      margin-top: 8px; padding: 14px 14px; border-radius: 14px;
+      border: 1px dashed var(--hairline);
+      background: #fff4e9;
+      font-size: 11px; color: var(--muted); line-height: 1.5;
+    }
+
+    .results-section { margin-bottom: 14px; }
+    .results-section-title {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #5e4534; margin-bottom: 5px;
+    }
+    .results-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    @media (max-width: 900px) { .results-grid { grid-template-columns: 1fr; } }
+
+    .brand-card {
+      background: var(--card);
+      border-radius: 15px;
+      border: 1px solid var(--hairline);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+      padding: 9px 10px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .brand-top-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .brand-main { display: flex; align-items: center; gap: 8px; }
+    .logo-circle {
+      width: 32px; height: 32px; border-radius: 999px;
+      background: #221612; color: #ffe8d5;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Playfair Display", serif;
+      font-size: 15px; letter-spacing: 0.16em; text-transform: uppercase;
+    }
+    .brand-name {
+      font-size: 13px; font-family: "Playfair Display", serif;
+      font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+    .price-chip {
+      font-size: 10px; padding: 3px 9px; border-radius: 999px;
+      border: 1px solid #b58665; background: #ffe1c4; color: #4a2815;
+      white-space: nowrap;
+    }
+    .price-chip.medium { background: #ffd3ab; }
+    .price-chip.high { background: #ffc493; }
+
+    .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+    .badge {
+      font-size: 9px; padding: 2px 7px; border-radius: 999px;
+      border: 1px solid rgba(223, 214, 198, 0.95);
+      background: #f9f3e7; color: var(--accent-soft);
+      letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
+    }
+    .badge.pick {
+      background: #ffe6cf;
+      border-color: rgba(246, 107, 40, 0.55);
+      color: var(--accent-dark);
+    }
+    .badge.trend {
+      background: #fff3e7;
+      border-color: rgba(90, 59, 42, 0.25);
+      color: var(--accent-soft);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .desc { font-size: 10px; color: var(--muted); line-height: 1.45; }
+    .category-badges { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+    .cat-pill {
+      font-size: 9px; padding: 2px 6px; border-radius: 999px;
+      border: 1px solid rgba(223, 214, 198, 0.95);
+      color: var(--muted); background: #f9f3e7;
+    }
+    .brand-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; gap: 6px; }
+    .visit-link {
+      font-size: 10px; color: var(--hero-orange-dark);
+      border-bottom: 1px solid transparent; padding-bottom: 1px;
+      transition: 0.15s ease; white-space: nowrap;
+    }
+    .visit-link:hover { border-color: var(--hero-orange-dark); }
+    .meta { font-size: 9px; color: var(--muted); text-align: right; line-height: 1.35; }
+
+    @media (max-width: 600px) { .nav-menu { display: none; } }
+
+    /* ✅ CONTACT SECTION */
+    .contact {
+      width: 100%;
+      display: none;
+      justify-content: center;
+      padding: 40px 24px 60px;
+    }
+    .contact-inner {
+      width: 100%;
+      max-width: 1160px;
+      background: var(--shell);
+      border-radius: 24px;
+      border: 1px solid var(--hairline);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.18);
+      padding: 22px 20px;
+      display: grid;
+      grid-template-columns: 1.05fr 1.25fr;
+      gap: 18px;
+    }
+    @media (max-width: 900px) { .contact-inner { grid-template-columns: 1fr; } }
+    .contact-card {
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px solid var(--hairline);
+      padding: 16px 16px;
+    }
+    .contact-title {
+      font-family: "Playfair Display", serif;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 14px;
+      color: var(--accent-dark);
+      margin-bottom: 10px;
+    }
+    .contact-line {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.8;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .contact-line i { color: var(--hero-orange-dark); width: 18px; text-align: center; }
+    .contact-note {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .map-wrap {
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px solid var(--hairline);
+      overflow: hidden;
+      min-height: 320px;
+    }
+    .map-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      min-height: 320px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="nav-left">
+        STYLE MATCHER CO.<br />
+        DIGITAL STYLE & BRAND GUIDE
+      </div>
+
+      <div class="nav-logo">Style Matcher</div>
+
+      <!-- ✅ Right top now includes socials -->
+      <div class="nav-right">
+        <div class="nav-right-top">
+          <div>
+            ISTANBUL · LONDON<br />
+            ONLINE · WORLDWIDE
+          </div>
+          <div class="social-row" aria-label="Social links (visual)">
+            <!-- ✅ replace href with your real accounts later -->
+            <a class="social-link" href="#" title="Instagram">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a class="social-link" href="#" title="TikTok">
+              <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a class="social-link" href="#" title="YouTube">
+              <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a class="social-link" href="#" title="Pinterest">
+              <i class="fa-brands fa-pinterest-p"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <a onclick="navigateTo('hero')">Home</a>
+        <a onclick="navigateTo('hero')">About</a>
+        <a onclick="navigateTo('matcher')">Styles</a>
+        <a onclick="navigateTo('matcher')">Brands</a>
+        <a onclick="navigateTo('contact')">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <h1 class="hero-heading">
+          Style Matching Studio<br />
+          for Fashion Lovers, Shoppers<br />
+          & Wardrobe Curators<span>.</span>
+        </h1>
+        <p class="hero-text">
+          Style Matcher is a simple way to connect your personal aesthetic
+          with the right clothing and accessory brands. No endless scrolling –
+          just a focused list of places that actually fit your vibe and budget.
+        </p>
+        <div class="hero-cta-row">
+          <button class="hero-btn" onclick="showMatcher()">Start matching</button>
+          <p class="hero-note">
+            One click, a few choices – then we reveal curated stores based on style, budget and colours.
+          </p>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-right-fallback">
+          <div class="hero-card"></div>
+          <div class="hero-card small"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATCHER -->
+  <section class="matcher" id="matcher">
+    <div class="matcher-inner">
+      <div class="left-panel">
+        <div class="pill-small">
+          <span class="pill-small-dot"></span>
+          <span>Step 1 · Tell us your world</span>
+        </div>
+        <div>
+          <div class="left-panel-title">Choose style & budget</div>
+          <p class="left-panel-sub">
+            Pick the vibe you want to lean into and the price level you’re comfortable with. Add colour preferences and an optional focus piece to get more specific matches.
+          </p>
+        </div>
+
+        <div class="form-card">
+          <div class="steps">
+            <div class="field">
+              <label for="styleSelect">Style</label>
+              <select id="styleSelect">
+                <option value="business_casual">Business Casual</option>
+                <option value="streetwear">Streetwear</option>
+                <option value="sporty">Sporty / Athleisure</option>
+                <option value="elegant">Elegant / Chic</option>
+                <option value="minimal">Minimal / Clean</option>
+                <option value="vintage">Vintage / Retro</option>
+              </select>
+              <div class="chips-row" id="styleChips"></div>
+            </div>
+
+            <div class="field">
+              <label>Budget level</label>
+              <div class="budget-row" id="budgetPills"></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Gender</label>
+            <div class="gender-row" id="genderPills"></div>
+          </div>
+
+          <div class="field">
+            <label>Color preferences</label>
+            <div class="color-row" id="colorPills"></div>
+          </div>
+
+          <div class="field">
+            <label for="searchInput">Optional focus</label>
+            <input type="text" id="searchInput" placeholder="E.g. sneakers, blazer, watch..." />
+          </div>
+
+          <div class="btn-row">
+            <button class="primary-btn" id="matchBtn">
+              <span class="sparkle-icon">✧</span>
+              <span>Find my style matches</span>
+            </button>
+            <span class="note-tiny">
+              Suggestions reflect each brand’s overall aesthetic, colours and typical price point.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="results-header">
+          <h2>Suggested stores</h2>
+          <p class="results-sub" id="resultsSubtitle">
+            Once you choose a style and budget, you’ll see a curated set of matches here, grouped by price level.
+          </p>
+          <div class="tag-line">
+            <button class="mini-tag mini-tag-cat active" data-category="all">Clothing</button>
+            <button class="mini-tag mini-tag-cat" data-category="accessories">Accessories</button>
+            <div class="mini-tag">Office · Street · Evening</div>
+          </div>
+        </div>
+
+        <div id="resultsContainer" class="results-scroll">
+          <div class="empty-state">
+            You haven’t started yet.
+            Select your style, budget and colours on the left, then click
+            <b>“Find my style matches”</b> to see options tailored to your choices.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-inner">
+
+    <!-- LEFT: CONTACT INFO -->
+    <div class="contact-card">
+      <div class="contact-title">Contact Us</div>
+
+      <div class="contact-line">
+        <i class="fa-solid fa-phone"></i>
+        <span>+90 (212) 555 55 55</span>
+      </div>
+
+      <div class="contact-line">
+        <i class="fa-solid fa-envelope"></i>
+        <span>hello@stylematcher.co</span>
+      </div>
+
+      <div class="contact-line">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>İstanbul, Türkiye</span>
+      </div>
+
+      <p class="contact-note">
+        For collaborations, brand partnerships and styling requests, reach out by email.
+        We typically reply within 24–48 hours.
+         </div>
+
+    <!-- RIGHT: MAP -->
+    <div class="map-wrap">
+      <iframe
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=Taksim%20Square%20Istanbul&output=embed"
+        title="Style Matcher Location Map">
+      </iframe>
+    </div>
+
+  </div>
+</section>
+
+
+  <script>
+    // ✅ Simple SPA-like navigation (shows/hides sections)
+    function navigateTo(sectionId) {
+      const hero = document.getElementById("hero");
+      const matcher = document.getElementById("matcher");
+      const contact = document.getElementById("contact");
+
+      // reset
+      matcher.style.display = "none";
+      contact.style.display = "none";
+
+      if (sectionId === "matcher") {
+        matcher.style.display = "flex";
+        matcher.scrollIntoView({ behavior: "smooth" });
+      } else if (sectionId === "contact") {
+        contact.style.display = "flex";
+        contact.scrollIntoView({ behavior: "smooth" });
+      } else {
+        hero.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    function showMatcher() {
+      navigateTo("matcher");
+    }
+
+    const BUDGET_LEVELS = {
+      low: { label: "Low", icon: "₺", score: 1 },
+      medium: { label: "Medium", icon: "₺₺", score: 2 },
+      high: { label: "High", icon: "₺₺₺", score: 3 },
+    };
+
+    const STYLES = {
+      business_casual: { label: "Business Casual", chips: ["Office", "Smart casual", "Blazer", "Shirt"] },
+      streetwear: { label: "Streetwear", chips: ["Oversized", "Sneakers", "Hoodie", "Logo"] },
+      sporty: { label: "Sporty / Athleisure", chips: ["Running", "Training", "Gym", "Activewear"] },
+      elegant: { label: "Elegant / Chic", chips: ["Evening", "Occasion", "Dressy", "Refined"] },
+      minimal: { label: "Minimal / Clean", chips: ["Basic", "Straight cut", "Neutral", "Monochrome"] },
+      vintage: { label: "Vintage / Retro", chips: ["Retro", "Second hand", "90s", "Y2K"] },
+    };
+
+    const COLORS = {
+      neutral: { label: "Neutrals / Beige", dot: "#f3e0c4" },
+      black: { label: "Black", dot: "#111111" },
+      white: { label: "White", dot: "#fdfdfd" },
+      earth: { label: "Earth tones", dot: "#b47a4c" },
+      bright: { label: "Bright colours", dot: "#f95f4b" },
+      pastel: { label: "Pastels", dot: "#f7bfd8" },
+      dark: { label: "Dark tones", dot: "#302024" },
+    };
+
+    const GENDERS = {
+      all: { label: "All" },
+      women: { label: "Women" },
+      men: { label: "Men" },
+      unisex: { label: "Unisex" },
+    };
+
+    // ✅ Editors Pick list
+    const EDITORS_PICKS = new Set([
+      "COS","Massimo Dutti","Vakko","Beymen","Louis Vuitton","Chanel","Prada","Saint Laurent",
+    ]);
+
+    // ✅ Trend Scores (0-100) -> can be updated seasonally
+    const TREND_SCORES = {
+      "Zara": 82, "H&M": 70, "COS": 86, "Massimo Dutti": 74, "Mango": 73, "Uniqlo": 78,
+      "Bershka": 80, "Pull&Bear": 77, "Stradivarius": 76, "Nike": 88, "Adidas": 84, "Puma": 79,
+      "Pandora": 72, "Swarovski": 69, "Vakko": 63, "Beymen": 61, "Levi's": 75,
+      "Louis Vuitton": 60, "Chanel": 58, "Gucci": 64, "Prada": 62, "Saint Laurent": 59,
+      "Network": 55, "İpekyol": 57, "Fabrika": 52, "Mudo": 54, "Boyner": 53,
+      "Koton": 50, "DeFacto": 49, "Decathlon": 46, "Hummel": 48, "Accessorize": 56,
+      "So Chic": 51, "Atasay": 50, "Zen Pırlanta": 47, "New Era": 71, "Vans": 74, "Twist": 60,
+      "Zara Minimal Line": 78, "Pull&Bear Clean": 68, "Trendyol Vintage": 62, "Modacruz": 60, "Local Thrift Boutiques": 65,
+      "Under Armour": 66,
+    };
+
+    // ✅ reduce repetition across searches
+    let shownBrandsHistory = new Map();
+
+    const BRANDS = [
+      {
+        name: "Massimo Dutti",
+        styles: ["business_casual", "minimal", "elegant"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Timeless, sophisticated pieces with a premium office-friendly aesthetic.",
+        url: "https://www.massimodutti.com",
+        colors: ["neutral", "earth", "black", "white", "dark"],
+      },
+      {
+        name: "Zara",
+        styles: ["business_casual", "streetwear", "elegant", "minimal", "vintage"],
+        budgetScore: 2,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Trend-led collections that move easily from desk to dinner and street.",
+        url: "https://www.zara.com",
+        colors: ["neutral", "bright", "dark", "pastel", "white"],
+      },
+      {
+        name: "Mango",
+        styles: ["business_casual", "elegant", "minimal"],
+        budgetScore: 2,
+        categories: ["clothes", "accessories"],
+        genders: ["women"],
+        description: "Modern city style with clean silhouettes and a polished touch.",
+        url: "https://shop.mango.com",
+        colors: ["neutral", "earth", "white", "pastel"],
+      },
+      {
+        name: "Network",
+        styles: ["business_casual", "elegant"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Sharp tailoring and refined pieces for meetings and events.",
+        url: "https://www.network.com.tr",
+        colors: ["neutral", "dark", "black", "earth"],
+      },
+      {
+        name: "İpekyol",
+        styles: ["business_casual", "elegant"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women"],
+        description: "Feminine office and occasion wear with a refined, modern feel.",
+        url: "https://www.ipekyol.com.tr",
+        colors: ["neutral", "pastel", "earth", "white"],
+      },
+      {
+        name: "LCW Class",
+        styles: ["business_casual"],
+        budgetScore: 1,
+        categories: ["clothes"],
+        genders: ["women", "men"],
+        description: "Accessible shirts, trousers and basics suitable for a simple office wardrobe.",
+        url: "https://www.lcwaikiki.com",
+        colors: ["neutral", "white"],
+      },
+      {
+        name: "Fabrika",
+        styles: ["business_casual"],
+        budgetScore: 2,
+        categories: ["clothes"],
+        genders: ["women", "men"],
+        description: "City-ready smart shirts, chinos and blazers for everyday office looks.",
+        url: "https://www.fabrika.com.tr",
+        colors: ["neutral", "earth", "dark"],
+      },
+      {
+        name: "COS",
+        styles: ["minimal", "business_casual"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Minimalist, architectural cuts and elevated fabrics for quiet luxury.",
+        url: "https://www.cos.com",
+        colors: ["neutral", "black", "white", "dark"],
+      },
+      {
+        name: "Uniqlo",
+        styles: ["minimal", "sporty"],
+        budgetScore: 2,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "High-function basics with clean lines and practical fabrics.",
+        url: "https://www.uniqlo.com",
+        colors: ["neutral", "white", "black"],
+      },
+      {
+        name: "Mudo",
+        styles: ["business_casual", "elegant", "minimal"],
+        budgetScore: 2,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Relaxed yet polished pieces with a Mediterranean touch.",
+        url: "https://www.mudo.com.tr",
+        colors: ["neutral", "earth", "pastel"],
+      },
+      {
+        name: "Boyner",
+        styles: ["business_casual", "sporty", "streetwear"],
+        budgetScore: 2,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Multi-brand destination covering office, casual and sporty looks.",
+        url: "https://www.boyner.com.tr",
+        colors: ["neutral", "bright", "dark"],
+      },
+      {
+        name: "H&M",
+        styles: ["business_casual", "streetwear", "minimal"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Affordable trends blending office basics with casual everyday pieces.",
+        url: "https://www2.hm.com",
+        colors: ["neutral", "bright", "pastel"],
+      },
+      {
+        name: "Koton",
+        styles: ["business_casual", "streetwear"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Budget-friendly shirts, dresses and denim for daily wear.",
+        url: "https://www.koton.com",
+        colors: ["bright", "pastel", "neutral"],
+      },
+      {
+        name: "DeFacto",
+        styles: ["business_casual", "streetwear"],
+        budgetScore: 1,
+        categories: ["clothes"],
+        genders: ["women", "men"],
+        description: "Casual basics, denim and knitwear at accessible price points.",
+        url: "https://www.defacto.com.tr",
+        colors: ["bright", "neutral", "pastel"],
+      },
+
+      {
+        name: "Bershka",
+        styles: ["streetwear", "vintage"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Youthful street-inspired pieces with bold prints and colour.",
+        url: "https://www.bershka.com",
+        colors: ["bright", "dark", "pastel"],
+      },
+      {
+        name: "Pull&Bear",
+        styles: ["streetwear", "vintage"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Relaxed hoodies, graphic tees and easy jeans with a casual vibe.",
+        url: "https://www.pullandbear.com",
+        colors: ["neutral", "bright", "pastel"],
+      },
+      {
+        name: "Stradivarius",
+        styles: ["streetwear", "elegant"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories"],
+        genders: ["women"],
+        description: "Bridges everyday street looks with soft, feminine details.",
+        url: "https://www.stradivarius.com",
+        colors: ["bright", "pastel", "neutral"],
+      },
+      {
+        name: "New Era",
+        styles: ["streetwear"],
+        budgetScore: 2,
+        categories: ["accessories"],
+        genders: ["unisex"],
+        description: "Iconic caps and hats that complete laid-back streetwear outfits.",
+        url: "https://www.neweracap.com",
+        colors: ["dark", "black", "bright"],
+      },
+      {
+        name: "Vans",
+        styles: ["streetwear", "vintage"],
+        budgetScore: 2,
+        categories: ["shoes", "accessories"],
+        genders: ["unisex"],
+        description: "Skate heritage sneakers and canvas shoes with a retro, casual feel.",
+        url: "https://www.vans.com",
+        colors: ["dark", "neutral", "earth"],
+      },
+      {
+        name: "Levi's",
+        styles: ["streetwear", "vintage"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Iconic denim and casual pieces with strong heritage styling.",
+        url: "https://www.levi.com",
+        colors: ["earth", "dark", "neutral"],
+      },
+      {
+        name: "Twist",
+        styles: ["streetwear", "elegant"],
+        budgetScore: 2,
+        categories: ["clothes", "accessories"],
+        genders: ["women"],
+        description: "Playful yet chic silhouettes with a bold, youthful attitude.",
+        url: "https://www.twist.com.tr",
+        colors: ["bright", "pastel", "dark"],
+      },
+
+      {
+        name: "Nike",
+        styles: ["sporty", "streetwear"],
+        budgetScore: 2,
+        categories: ["clothes", "shoes", "accessories"],
+        genders: ["unisex"],
+        description: "Performance-focused sportswear that also works as lifestyle street style.",
+        url: "https://www.nike.com",
+        colors: ["bright", "dark", "black"],
+      },
+      {
+        name: "Adidas",
+        styles: ["sporty", "streetwear"],
+        budgetScore: 2,
+        categories: ["clothes", "shoes", "accessories"],
+        genders: ["unisex"],
+        description: "Classic three-stripe pieces balancing training and athleisure.",
+        url: "https://www.adidas.com",
+        colors: ["bright", "dark", "neutral"],
+      },
+      {
+        name: "Puma",
+        styles: ["sporty", "streetwear"],
+        budgetScore: 2,
+        categories: ["clothes", "shoes"],
+        genders: ["unisex"],
+        description: "Sporty silhouettes and sneakers suited for gym and everyday outfits.",
+        url: "https://www.puma.com",
+        colors: ["bright", "dark", "neutral"],
+      },
+      {
+        name: "Under Armour",
+        styles: ["sporty"],
+        budgetScore: 2,
+        categories: ["clothes", "accessories"],
+        genders: ["unisex"],
+        description: "Technical performance gear ideal for workouts, running and training.",
+        url: "https://www.underarmour.com",
+        colors: ["dark", "black"],
+      },
+      {
+        name: "Decathlon",
+        styles: ["sporty"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories", "equipment"],
+        genders: ["unisex"],
+        description: "Wide range of budget-friendly sportswear and equipment for almost any activity.",
+        url: "https://www.decathlon.com",
+        colors: ["bright", "neutral"],
+      },
+      {
+        name: "Hummel",
+        styles: ["sporty"],
+        budgetScore: 1,
+        categories: ["clothes", "shoes"],
+        genders: ["unisex"],
+        description: "Team jerseys, tracksuits and sporty basics with a casual twist.",
+        url: "https://www.hummel.net",
+        colors: ["bright", "dark"],
+      },
+
+      {
+        name: "Pandora",
+        styles: ["elegant", "minimal", "streetwear"],
+        budgetScore: 3,
+        categories: ["accessories", "jewellery"],
+        genders: ["women"],
+        description: "Charm bracelets, rings and everyday jewellery that can be personalised to your style.",
+        url: "https://www.pandora.net",
+        colors: ["neutral", "white", "pastel", "bright"],
+      },
+      {
+        name: "Swarovski",
+        styles: ["elegant"],
+        budgetScore: 3,
+        categories: ["accessories", "jewellery"],
+        genders: ["women"],
+        description: "Crystal-embellished necklaces, earrings and bracelets that stand out on special occasions.",
+        url: "https://www.swarovski.com",
+        colors: ["bright", "white", "dark"],
+      },
+      {
+        name: "So Chic",
+        styles: ["elegant", "minimal"],
+        budgetScore: 2,
+        categories: ["accessories", "jewellery"],
+        genders: ["women"],
+        description: "Delicate gold- and silver-toned jewellery pieces that work for both everyday and gifts.",
+        url: "https://www.sochic.com.tr",
+        colors: ["neutral", "white", "pastel"],
+      },
+      {
+        name: "Atasay",
+        styles: ["elegant"],
+        budgetScore: 3,
+        categories: ["accessories", "jewellery"],
+        genders: ["women"],
+        description: "Gold and diamond collections designed for weddings, ceremonies and meaningful gifts.",
+        url: "https://www.atasay.com",
+        colors: ["earth", "neutral", "white"],
+      },
+      {
+        name: "Zen Pırlanta",
+        styles: ["elegant"],
+        budgetScore: 3,
+        categories: ["accessories", "jewellery"],
+        genders: ["women"],
+        description: "Romantic diamond rings, necklaces and bracelets with a classic look.",
+        url: "https://www.zenpirlanta.com",
+        colors: ["white", "neutral", "dark"],
+      },
+      {
+        name: "Accessorize",
+        styles: ["streetwear", "elegant"],
+        budgetScore: 2,
+        categories: ["accessories"],
+        genders: ["women"],
+        description: "Hair accessories, bags and jewellery to finish off both casual and city-break outfits.",
+        url: "https://www.accessorize.com",
+        colors: ["bright", "pastel", "neutral"],
+      },
+
+      {
+        name: "Vakko",
+        styles: ["elegant"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Luxury-level occasionwear, tailoring and statement pieces for formal events.",
+        url: "https://www.vakko.com",
+        colors: ["dark", "black", "neutral", "white"],
+      },
+      {
+        name: "Beymen",
+        styles: ["elegant"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "High-end designer labels and premium essentials for a sophisticated wardrobe.",
+        url: "https://www.beymen.com",
+        colors: ["dark", "black", "neutral", "white"],
+      },
+      {
+        name: "Roman",
+        styles: ["elegant"],
+        budgetScore: 2,
+        categories: ["clothes"],
+        genders: ["women"],
+        description: "Dresses and suits designed for events, dinners and smart social occasions.",
+        url: "https://www.roman.com.tr",
+        colors: ["dark", "pastel", "neutral"],
+      },
+
+      {
+        name: "Zara Minimal Line",
+        styles: ["minimal"],
+        budgetScore: 2,
+        categories: ["clothes"],
+        genders: ["women", "men"],
+        description: "A more stripped-back side of Zara with clean shapes and a neutral palette.",
+        url: "https://www.zara.com",
+        colors: ["neutral", "white", "black"],
+      },
+      {
+        name: "Pull&Bear Clean",
+        styles: ["minimal", "streetwear"],
+        budgetScore: 1,
+        categories: ["clothes"],
+        genders: ["women", "men"],
+        description: "Soft-toned basics and relaxed staples with a minimal, easy-going feel.",
+        url: "https://www.pullandbear.com",
+        colors: ["neutral", "white", "pastel"],
+      },
+
+      {
+        name: "Trendyol Vintage",
+        styles: ["vintage"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Online marketplace collections with vintage-inspired and second-hand pieces.",
+        url: "https://www.trendyol.com",
+        colors: ["earth", "bright", "pastel", "dark"],
+      },
+      {
+        name: "Modacruz",
+        styles: ["vintage", "elegant"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Pre-loved branded items and second-hand wardrobes at accessible prices.",
+        url: "https://www.modacruz.com",
+        colors: ["earth", "pastel", "neutral"],
+      },
+      {
+        name: "Local Thrift Boutiques",
+        styles: ["vintage", "streetwear"],
+        budgetScore: 1,
+        categories: ["clothes", "accessories"],
+        genders: ["unisex"],
+        description: "Independent thrift shops where you can find one-of-a-kind retro and street pieces.",
+        url: "https://www.google.com/search?q=thrift+store",
+        colors: ["earth", "bright", "dark", "pastel"],
+      },
+
+      {
+        name: "Louis Vuitton",
+        styles: ["elegant"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Iconic French luxury fashion house known for leather goods and timeless elegance.",
+        url: "https://www.louisvuitton.com",
+        colors: ["black", "dark", "neutral"],
+      },
+      {
+        name: "Chanel",
+        styles: ["elegant"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women"],
+        description: "Parisian haute couture, classic tweed jackets and luxury accessories.",
+        url: "https://www.chanel.com",
+        colors: ["black", "white", "neutral"],
+      },
+      {
+        name: "Gucci",
+        styles: ["elegant", "streetwear"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Bold Italian luxury blending heritage with modern fashion statements.",
+        url: "https://www.gucci.com",
+        colors: ["dark", "bright", "neutral"],
+      },
+      {
+        name: "Prada",
+        styles: ["elegant", "minimal"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Minimalist luxury with strong silhouettes and intellectual fashion.",
+        url: "https://www.prada.com",
+        colors: ["black", "neutral", "dark"],
+      },
+      {
+        name: "Saint Laurent",
+        styles: ["elegant", "minimal"],
+        budgetScore: 3,
+        categories: ["clothes", "accessories"],
+        genders: ["women", "men"],
+        description: "Sharp tailoring and Parisian rock-chic luxury aesthetic.",
+        url: "https://www.ysl.com",
+        colors: ["black", "dark"],
+      },
+    ];
+
+    const styleSelect = document.getElementById("styleSelect");
+    const styleChipsContainer = document.getElementById("styleChips");
+    const budgetPillsContainer = document.getElementById("budgetPills");
+    const genderPillsContainer = document.getElementById("genderPills");
+    const colorPillsContainer = document.getElementById("colorPills");
+    const searchInput = document.getElementById("searchInput");
+    const matchBtn = document.getElementById("matchBtn");
+    const resultsContainer = document.getElementById("resultsContainer");
+    const resultsSubtitle = document.getElementById("resultsSubtitle");
+    const categoryTagButtons = document.querySelectorAll(".mini-tag-cat");
+
+    let selectedBudget = "medium";
+    let selectedStyle = styleSelect.value;
+    let selectedGender = "all";
+    let selectedColors = new Set();
+    let selectedCategory = "all";
+
+    categoryTagButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        categoryTagButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedCategory = btn.dataset.category || "all";
+        renderResults(matchBrands());
+      });
+    });
+
+    function renderBudgetPills() {
+      budgetPillsContainer.innerHTML = "";
+      Object.entries(BUDGET_LEVELS).forEach(([key, info]) => {
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "budget-pill" + (key === selectedBudget ? " active" : "");
+        pill.innerHTML = `${info.icon} <span>${info.label}</span>`;
+        pill.addEventListener("click", () => {
+          selectedBudget = key;
+          renderBudgetPills();
+        });
+        budgetPillsContainer.appendChild(pill);
+      });
+    }
+
+    function renderGenderPills() {
+      genderPillsContainer.innerHTML = "";
+      Object.entries(GENDERS).forEach(([key, info]) => {
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "gender-pill" + (key === selectedGender ? " active" : "");
+        pill.textContent = info.label;
+        pill.addEventListener("click", () => {
+          selectedGender = key;
+          renderGenderPills();
+          renderResults(matchBrands());
+        });
+        genderPillsContainer.appendChild(pill);
+      });
+    }
+
+    function renderStyleChips() {
+      const styleData = STYLES[selectedStyle];
+      styleChipsContainer.innerHTML = "";
+      if (!styleData) return;
+      styleData.chips.forEach((chipLabel, index) => {
+        const chip = document.createElement("div");
+        chip.className = "chip" + (index === 0 ? " active" : "");
+        chip.textContent = chipLabel;
+        chip.addEventListener("click", () => {
+          [...styleChipsContainer.children].forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+        });
+        styleChipsContainer.appendChild(chip);
+      });
+    }
+
+    function renderColorPills() {
+      colorPillsContainer.innerHTML = "";
+      Object.entries(COLORS).forEach(([key, info]) => {
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "color-pill" + (selectedColors.has(key) ? " active" : "");
+        pill.innerHTML = `<span class="color-dot" style="background:${info.dot};"></span><span>${info.label}</span>`;
+        pill.addEventListener("click", () => {
+          if (selectedColors.has(key)) selectedColors.delete(key);
+          else selectedColors.add(key);
+          renderColorPills();
+        });
+        colorPillsContainer.appendChild(pill);
+      });
+    }
+
+    styleSelect.addEventListener("change", (e) => {
+      selectedStyle = e.target.value;
+      renderStyleChips();
+    });
+
+    renderBudgetPills();
+    renderGenderPills();
+    renderStyleChips();
+    renderColorPills();
+
+    function matchBrands() {
+      const styleKey = selectedStyle;
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const userBudgetScore = BUDGET_LEVELS[selectedBudget].score;
+
+      let candidates = BRANDS.slice();
+
+      if (selectedCategory !== "accessories") {
+        candidates = candidates.filter((brand) => brand.styles.includes(styleKey));
+      }
+
+      candidates = candidates.filter((brand) => brand.budgetScore === userBudgetScore);
+
+      if (selectedGender !== "all") {
+        candidates = candidates.filter((brand) => {
+          const genders = brand.genders && brand.genders.length ? brand.genders : ["unisex"];
+          return genders.includes(selectedGender) || genders.includes("unisex");
+        });
+      }
+
+      if (searchTerm) {
+        candidates = candidates.filter((brand) => {
+          const haystack =
+            brand.name.toLowerCase() +
+            " " +
+            brand.description.toLowerCase() +
+            " " +
+            (brand.categories || []).join(" ").toLowerCase();
+          return haystack.includes(searchTerm);
+        });
+      }
+
+      if (selectedColors.size > 0) {
+        candidates = candidates.filter((brand) => {
+          if (!brand.colors || !brand.colors.length) return false;
+          return brand.colors.some((c) => selectedColors.has(c));
+        });
+      }
+
+      if (selectedCategory === "accessories") {
+        candidates = candidates.filter((brand) => {
+          const cats = brand.categories || [];
+          if (cats.length === 0) return false;
+          return cats.every((c) => c === "accessories" || c === "jewellery");
+        });
+      }
+
+      const luxuryNames = ["Louis Vuitton", "Chanel", "Gucci", "Prada", "Saint Laurent"];
+
+      candidates = candidates
+        .map((brand) => {
+          const styleBonus = brand.styles.includes(styleKey) ? 3 : 0;
+
+          let colorScore = 0;
+          if (selectedColors.size > 0 && brand.colors) {
+            const matches = brand.colors.filter((c) => selectedColors.has(c)).length;
+            colorScore = matches * 2;
+          }
+
+          const seenCount = shownBrandsHistory.get(brand.name) || 0;
+          const repetitionPenalty = seenCount * 3;
+
+          const editorsBonus = EDITORS_PICKS.has(brand.name) ? 6 : 0;
+
+          const ts = typeof TREND_SCORES[brand.name] === "number" ? TREND_SCORES[brand.name] : 50;
+          const trendBonus = Math.round((ts / 100) * 6);
+
+          const luxuryBonus = brand.budgetScore === 3 && luxuryNames.includes(brand.name) ? 8 : 0;
+
+          const finalScore =
+            15 + styleBonus + colorScore + editorsBonus + trendBonus + luxuryBonus - repetitionPenalty;
+
+          return { ...brand, _score: finalScore, _trendScore: ts, _editorsPick: EDITORS_PICKS.has(brand.name) };
+        })
+        .sort((a, b) => b._score - a._score);
+
+      if (candidates.length > 12) candidates = candidates.slice(0, 12);
+      return candidates;
+    }
+
+    function getInitials(name) {
+      const parts = name.split(/\s+/).filter(Boolean);
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return parts[0].charAt(0).toUpperCase() + parts[1].charAt(0).toUpperCase();
+    }
+
+    function renderResults(brands) {
+      if (!brands.length) {
+        resultsContainer.innerHTML = `
+          <div class="empty-state">
+            We couldn’t find an ideal match with the current filters. <br />
+            Try adjusting your budget, switching style, changing colours, switching gender,
+            or clearing the focus field and matching again.
+          </div>
+        `;
+        resultsSubtitle.textContent = "No results found. Adjust your filters and try matching again.";
+        return;
+      }
+
+      const styleLabel = STYLES[selectedStyle]?.label || "Selected style";
+      const budgetLabel = BUDGET_LEVELS[selectedBudget].label;
+
+      let colorLabel = "";
+      if (selectedColors.size > 0) {
+        const labels = [...selectedColors].map((c) => COLORS[c]?.label || c);
+        colorLabel = " · Colours: " + labels.join(", ");
+      }
+
+      let genderLabel = "";
+      if (selectedGender !== "all") {
+        genderLabel = " · Gender: " + (GENDERS[selectedGender]?.label || selectedGender);
+      }
+
+      let categoryLabel = "";
+      if (selectedCategory === "accessories") categoryLabel = " · Filter: Accessories only";
+
+      resultsSubtitle.textContent =
+        `${styleLabel} · ${budgetLabel} budget${colorLabel}${genderLabel}${categoryLabel} · Grouped by price level`;
+
+      const grouped = { low: [], medium: [], high: [] };
+      brands.forEach((b) => {
+        if (b.budgetScore === 1) grouped.low.push(b);
+        else if (b.budgetScore === 2) grouped.medium.push(b);
+        else grouped.high.push(b);
+      });
+
+      const order = ["low", "medium", "high"];
+      const titles = { low: "Low budget options", medium: "Medium budget options", high: "High budget options" };
+      const budgetClassMap = { low: "", medium: "medium", high: "high" };
+
+      const wrapper = document.createElement("div");
+
+      order.forEach((key) => {
+        const list = grouped[key];
+        if (!list.length) return;
+
+        const section = document.createElement("div");
+        section.className = "results-section";
+
+        const title = document.createElement("div");
+        title.className = "results-section-title";
+        title.textContent = titles[key];
+        section.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.className = "results-grid";
+
+        list.forEach((brand) => {
+          const card = document.createElement("div");
+          card.className = "brand-card";
+
+          const budgetText = brand.budgetScore === 1 ? "Low" : brand.budgetScore === 2 ? "Medium" : "High";
+          const initials = getInitials(brand.name);
+
+          const budgetIconKey = Object.keys(BUDGET_LEVELS).find((k) => BUDGET_LEVELS[k].score === brand.budgetScore);
+          const budgetIcon = budgetIconKey ? BUDGET_LEVELS[budgetIconKey].icon : "";
+
+          const pickBadge = brand._editorsPick ? `<span class="badge pick">Editor’s Pick</span>` : "";
+          const trendBadge = `<span class="badge trend">Trend: ${brand._trendScore}/100</span>`;
+
+          card.innerHTML = `
+            <div class="brand-top-row">
+              <div class="brand-main">
+                <div class="logo-circle">${initials}</div>
+                <div class="brand-name">${brand.name}</div>
+              </div>
+              <div class="price-chip ${budgetClassMap[key]}">
+                ${budgetText} · ${budgetIcon}
+              </div>
+            </div>
+
+            <div class="badge-row">
+              ${pickBadge}
+              ${trendBadge}
+            </div>
+
+            <p class="desc">${brand.description}</p>
+
+            <div class="category-badges">
+              ${(brand.categories || [])
+                .map((cat) => `<span class="cat-pill">${cat.charAt(0).toUpperCase()}${cat.slice(1)}</span>`)
+                .join("")}
+            </div>
+
+            <div class="brand-footer">
+              <a class="visit-link" href="${brand.url}" target="_blank" rel="noopener noreferrer">Visit store →</a>
+              <div class="meta">
+                Style match: ${STYLES[selectedStyle]?.label || ""}<br/>
+                Categories: ${(brand.categories || []).join(", ")}
+              </div>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+
+        section.appendChild(grid);
+        wrapper.appendChild(section);
+      });
+
+      resultsContainer.innerHTML = "";
+      resultsContainer.appendChild(wrapper);
+
+      // history update
+      brands.forEach((b) => {
+        const current = shownBrandsHistory.get(b.name) || 0;
+        shownBrandsHistory.set(b.name, current + 1);
+      });
+    }
+
+    matchBtn.addEventListener("click", () => renderResults(matchBrands()));
+    searchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") renderResults(matchBrands()); });
+  </script>
+</body>
+</html>
